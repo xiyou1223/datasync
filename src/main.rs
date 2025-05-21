@@ -59,7 +59,7 @@ async fn mysql_job_handle(job: JobModel) {
             } else {
                 format!("source_{}_{}", job_name, "all")
             };
-            let source_init_pool_result = init_mysql_db_pool(&source_dns, &source_pool_name);
+            let source_init_pool_result = init_mysql_db_pool(&source_dns, &source_pool_name).await;
 
             let target_dns = format!(
                 "mysql://{}:{}@{}:{}/",
@@ -74,7 +74,7 @@ async fn mysql_job_handle(job: JobModel) {
             } else {
                 format!("target_{}_{}", job_name, "all")
             };
-            let target_init_pool_result = init_mysql_db_pool(&target_dns, &target_pool_name);
+            let target_init_pool_result = init_mysql_db_pool(&target_dns, &target_pool_name).await;
 
             if source_init_pool_result.is_ok() && target_init_pool_result.is_ok() {
                 println!(
@@ -82,14 +82,13 @@ async fn mysql_job_handle(job: JobModel) {
                     source_pool_name, target_pool_name
                 );
                 // 连接池创建成功，执行后续操作
-                let pool_map = MYSQL_DB_POOLS.lock().unwrap();
+                let pool_map = MYSQL_DB_POOLS.lock().await;
                 let source_pool_result = pool_map.get(&source_pool_name);
                 if source_pool_result.is_none() {
                     println!("源数据库连接池获取失败: {}", source_pool_name);
                     return;
                 }
                 let source_pool = source_pool_result.unwrap();
-                let source_pool_arc = Arc::new(source_pool.clone());
 
                 let target_pool_result = pool_map.get(&target_pool_name);
                 if target_pool_result.is_none() {
@@ -97,11 +96,10 @@ async fn mysql_job_handle(job: JobModel) {
                     return;
                 }
                 let target_pool = target_pool_result.unwrap();
-                let target_pool_arc = Arc::new(target_pool.clone());
 
                 // println!("===> pool: {:?}", pool);
                 // 查询数据库版本信息
-                let help = MysqlHelp::new(source_pool_arc, target_pool_arc);
+                let help = MysqlHelp::new(source_pool.clone(), target_pool.clone());
                 let versions = help.get_mysql_version().await;
                 match versions {
                     Ok(ver) => println!("数据库版本信息: {:?}", ver),
