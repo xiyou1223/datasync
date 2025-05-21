@@ -4,5 +4,5 @@
 
 ## 使用方法
 
-1. 参考 job 文件夹下的 job.yml.example 文件，编写自己的任务
-2. 运行 cargo run ./job/job.yml
+1. 参考 job 文件夹下的 job.toml.example 文件，编写自己的任务
+2. 运行 cargo run ./job/job.toml
