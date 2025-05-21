@@ -1,0 +1,18 @@
+[job]
+name = "canteen_all_db_sync"
+type = "all_database_sync"
+database_type = "mysql"
+
+[source]
+host  = "127.0.0.1"
+port  = "3306"
+user  = "root"
+password  = "root"
+
+[handler]
+
+[target]
+host  = "127.0.0.1"
+port  = "3306"
+user  = "root"
+password  = "root"
