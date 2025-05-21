@@ -1,4 +1,4 @@
-use std::{env, sync::Arc};
+use std::env;
 
 use datasync::{
     args::args_handle::{ArgsConfig, PrintMe},
